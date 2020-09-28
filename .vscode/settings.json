@@ -1,5 +1,6 @@
 {
     "[markdown]": {
         "editor.quickSuggestions": true
-    }
+    },
+    "editor.tabSize": 2
 }
