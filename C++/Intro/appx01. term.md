@@ -1,4 +1,4 @@
 - *RAII*
-- Stack unwinding: the process of passing the exception ‘‘up the stack’’ from the point of throw to a handler
+- Stack unwinding: the process of passing the exception "up the stack" from the point of throw to a handler
 - *Invariant*: describes a condition that should be always true in an object life, that is, whenever one of its method can be called.
 - *Class invariant*: an invariant used for constraining objects of a class. Methods of the class should preserve the invariant. The class invariant constrains the state stored in the object.
