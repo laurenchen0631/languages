@@ -553,6 +553,13 @@ void main() {
     ``` 
   - Symbol literals are compile-time constants.
 
+- Dynamic 
+  - When the Dart analyzer doesn’t have enough information to infer a specific type, it uses the `dynamic` type.
+    ```dart
+    Map<String, dynamic> arguments = {'argA': 'hello', 'argB': 42};
+    ```
+
+
 ## Functions
 - Functions in Dart are objects and have a type: `Function`.
   -  You can also call an instance of a Dart class if it is `Callable classes`.
@@ -1018,7 +1025,7 @@ void main() {
 
     ``` 
 
-- Assert
+- **Assert**
   ```dart
   // Make sure the variable has a non-null value.
   assert(text != null);
@@ -1035,3 +1042,186 @@ void main() {
   - We can attach a message to an assertion by adding a string as the second argument: `assert(urlString.startsWith('https'), 'URL ($urlString) should start with "https".');`
 
   - **In production**, assertions are ignored, and the arguments to assert aren’t evaluated.
+
+## Exceptions
+- Exceptions are errors indicating that something unexpected happened
+- If the exception isn’t caught, the *isolate* that raised the exception is suspended
+- All of Dart’s exceptions are **unchecked exceptions**
+  - Methods don’t declare which exceptions they might throw.
+  - Dart programs can throw any non-null object as an exception.
+  - WE aren’t required to catch any exceptions.
+- Dart provides `Exception` and `Error` types.
+
+- **Throw**
+  - Throw/raise an exception
+    ```dart
+    throw FormatException('Expected at least 1 section');
+    ```
+
+    ```dart
+    throw 'Out of llamas!';
+    ```
+  - Because throwing an exception is an expression, you can throw exceptions in `=>` statements
+
+- **Catch**
+  - Catch/capture an exception stops the exception from propagating and gives we a chance to handle it:
+    ```dart
+    try {
+      breedMoreLlamas();
+    } on OutOfLlamasException {
+      buyMoreLlamas();
+    }
+    ``` 
+  - We can specify multiple catch clauses
+    - Use `on` to specify the exception type
+    - Use `catch` to get the exception object.
+    ```dart
+    try {
+      breedMoreLlamas();
+    } on OutOfLlamasException {
+      // A specific exception
+      buyMoreLlamas();
+    } on Exception catch (e) {
+      // Anything else that is an exception
+      print('Unknown exception: $e');
+    } catch (e) {
+      // No specified type, handles all
+      print('Something really unknown: $e');
+    }
+    ```
+  - We specify one or two parameters to `catch()`
+    1. The first is the exception that was thrown.
+    2. the second is the `StackTrace` object.
+
+    ```dart
+    try {
+      // ···
+    } on Exception catch (e) {
+      print('Exception details:\n $e');
+    } catch (e, s) {
+      print('Exception details:\n $e');
+      print('Stack trace:\n $s');
+    }
+    ``` 
+  
+  - We can `rethrow` the catch exception
+
+    ```dart
+    void misbehave() {
+      try {
+        dynamic foo = true;
+        print(foo++); // Runtime error
+      } catch (e) {
+        print('misbehave() partially handled ${e.runtimeType}.');
+        rethrow; // Allow callers to see the exception.
+      }
+    }
+
+    void main() {
+      try {
+        misbehave();
+      } catch (e) {
+        print('main() finished handling ${e.runtimeType}.');
+      }
+    }
+
+    ``` 
+
+- **Finally**
+  - `finally` ensure that the closure runs whether or not an exception is thrown.
+    ```dart
+    try {
+      breedMoreLlamas();
+    } finally {
+      // Always clean up, even if an exception is thrown.
+      cleanLlamaStalls();
+    }
+    ```
+    
+    ```dart
+    try {
+      breedMoreLlamas();
+    } catch (e) {
+      print('Error: $e'); // Handle the exception first.
+    } finally {
+      cleanLlamaStalls(); // Then clean up.
+    }
+    ```
+
+## Isolates
+- Most computers, even on mobile platforms, have multi-core CPUs. 
+- Instead of threads, all Dart code runs inside of *isolates*.
+- Each isolate has its **own memory heap**, ensuring that no isolate’s state is accessible from any other isolate.
+- Use `Isolate.spawn()` to create a separate isolate.
+- The only way that isolates can work together is by passing messages back and forth.
+- For example, [Parse JSON in the background](https://flutter.dev/docs/cookbook/networking/background-parsing)
+
+## Typedefs
+- `typedef` is a concise way to alias a type
+
+  ```dart
+  typedef IntList = List<int>;
+  IntList il = [1, 2, 3];
+  ```
+
+- A type alias can have type parameters
+
+  ```dart
+  typedef ListMapper<X> = Map<X, List<X>>;
+  Map<String, List<String>> m1 = {}; // Verbose.
+  ListMapper<String> m2 = {}; // Same thing but shorter and clearer.
+  ```
+
+- We recommend using *inline function types* instead of typedefs for functions.
+
+  ```dart
+  typedef Compare<T> = int Function(T a, T b);
+
+  int sort(int a, int b) => a - b;
+
+  void main() {
+    assert(sort is Compare<int>); // True!
+  }
+  ```
+
+## Metadata
+- Metadata gives additional information about the code.
+- Metadata can appear before a library, class, typedef, type parameter, constructor, factory, function, field, parameter, or variable declaration and before an import or export directive.
+- A metadata annotation begins with the character `@,` followed by either a reference to a *compile-time constant* or a call to a *constant constructor*.
+  ```dart
+  class Television {
+    /// _Deprecated: Use [turnOn] instead._
+    @deprecated
+    void activate() {
+      turnOn();
+    }
+
+    /// Turns the TV's power on.
+    void turnOn() {...}
+  }
+  ``` 
+
+- There are two  annotations are available to all Dart code:
+  - `@deprecated`
+  - `@override`
+
+- We can define our own metadata annotations.
+  ```dart
+  library todo;
+
+  class Todo {
+    final String who;
+    final String what;
+
+    const Todo(this.who, this.what);
+  }
+  ``` 
+
+  ```dart
+  import 'todo.dart';
+
+  @Todo('seth', 'make this do something')
+  void doSomething() {
+    print('do something');
+  }
+  ```
