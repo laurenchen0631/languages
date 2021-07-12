@@ -196,7 +196,7 @@ void main() {
     double z = 1; // Equivalent to double z = 1.0.
     ``` 
 
-  - Both int and double are subtypes of `num`. The `n`um type includes
+  - Both int and double are subtypes of `num`. The `num` type includes
     - Basic operators such as +, -, /, and *.
     - `abs()`, `ceil()`, `floor()` and other methods.
     - If `num` and its subtypes don’t have what you’re looking for, the `dart:math` library might.
@@ -235,7 +235,7 @@ void main() {
     ``` 
 
 - Strings
-  - `String` object holds a sequence of **UTF-16** code units.
+  - A string in Dart is an **immutable** sequence of **UTF-16** code units.
   - Use *single or double* quotes to create a string:
     ```dart
     var s1 = 'Single quotes work well for string literals.';
@@ -448,6 +448,7 @@ void main() {
 
 - Maps
   - In general, a map is an object that associates keys and values. Both keys and values can be any type of object.
+  - Unlike in JavaScript, Dart objects are not maps.
   - To create using map literals
 
     ```dart
@@ -1061,7 +1062,20 @@ void main() {
     ```dart
     throw 'Out of llamas!';
     ```
-  - Because throwing an exception is an expression, you can throw exceptions in `=>` statements
+  - Because throwing an exception is an expression, you can throw exceptions in `=>` statements.
+  - Throwing an application-specific exception is a common way to indicate that an error has occurred.
+  - We can define a custom exception by implementing the Exception interface
+
+    ```dart
+    class FooException implements Exception {
+      final String? msg;
+
+      const FooException([this.msg]);
+
+      @override
+      String toString() => msg ?? 'FooException';
+    }
+    ```
 
 - **Catch**
   - Catch/capture an exception stops the exception from propagating and gives we a chance to handle it:
@@ -1201,7 +1215,7 @@ void main() {
   }
   ``` 
 
-- There are two  annotations are available to all Dart code:
+- There are two annotations are available to all Dart code:
   - `@deprecated`
   - `@override`
 
