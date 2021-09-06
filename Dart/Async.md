@@ -1,4 +1,4 @@
-## Asynchrony 
+# Asynchrony 
 - Dart libraries are full of functions that return `Future` or `Stream` objects
 - The `async` and `await` keywords support asynchronous programming
 
@@ -59,7 +59,7 @@
     }
     ```
 
-## Future
+# Future
 - A future represents the result of an asynchronous operation, and can have two states: `uncompleted` or `completed`.
   - *Uncompleted*: when an asynchronous function is called, it returns an uncompleted future. That future is waiting for the function’s asynchronous operation to finish or to throw an error.
   - *Completed*: if the asynchronous operation succeeds, the future completes with a value. Otherwise it completes with an error.
@@ -136,7 +136,7 @@
   });
   ```
 
-## Stream
+# Stream
 - `Stream` objects represents sequences of data.
   - For example, HTML events such as button clicks are delivered using streams.
 
@@ -335,7 +335,192 @@
     });
     ```
 
-## Generators
+# Create Stream
+
+- You can create streams in a few ways:
+	1. Transforming existing streams.
+	2. Creating a stream from scratch by using an `async*` function.
+	3. Creating a stream by using a `StreamController`.
+
+## Transform
+
+- The most general approach is to create a new stream that waits for events on the original stream and then outputs new events.
+
+	```dart
+	/// Splits a stream of consecutive strings into lines.
+	///
+	/// The input string is provided in smaller chunks through
+	/// the `source` stream.
+	Stream<String> lines(Stream<String> source) async* {
+		// Stores any partial line from the previous chunk.
+		var partial = '';
+		// Wait until a new chunk is available, then process it.
+		await for (var chunk in source) {
+			var lines = chunk.split('\n');
+			lines[0] = partial + lines[0]; // Prepend partial line.
+			partial = lines.removeLast(); // Remove new partial line.
+			for (var line in lines) {
+				yield line; // Add lines to output stream.
+			}
+		} // Add final partial line to output stream, if any.
+		if (partial.isNotEmpty) yield partial;
+	}
+	```
+	
+- For many common transformations, you can use `Stream`-supplied transforming methods such as `map()`, `where()`, `expand()`, and `take()`.
+	- Assume we have a stream, `counterStream`, that emits an increasing counter every second.
+
+	```dart
+	var counterStream = Stream<int>
+		.periodic(const Duration(seconds: 1), (x) => x)
+		.take(15);
+		
+    counterStream.forEach(print); // Print an integer every second, 15 times.
+	```
+	
+	- You could use any other transforming method.
+
+	
+	```dart
+	
+	var doubleCounterStream = counterStream
+		.map((int x) => x * 2) // Double the integer in each event.
+		.where((int x) => x.isEven) // Retain only even integer events.
+		.expand((var x) => [x, x]) // Duplicate each event.
+		.take(5); // Stop after the first five events.
+	```
+	
+- If you need even more control over the transformation, you can specify a [StreamTransformer](https://api.dart.dev/stable/dart-async/StreamTransformer-class.html)
+	- The platform libraries provide stream transformers for many common tasks.
+	- The following code uses the `utf8.decoder` and `LineSplitter` transformers provided by the dart:convert library.
+
+	```dart
+	Stream<List<int>> content = File('someFile.txt').openRead();
+	List<String> lines = 
+		await content.transform(utf8.decoder).transform(LineSplitter()).toList();
+	```
+
+## From scratch
+
+It’s rare to have an `async*` function building a stream from nothing. It needs to get its data from somewhere, and most often that somewhere is another stream.
+
+- One way to create a new stream is with an asynchronous generator (`async*`) function.
+	- The stream is created when the function is called.
+	- When the function returns, the stream closes.
+	- Until the function returns, it can emit events on the stream by using `yield` or `yield*` statements.
+
+```dart
+Stream<int> timedCounter(Duration interval, [int? maxCount]) async* {
+	int i = 0;
+	while (true) {
+		await Future.delayed(interval);
+		yield i++;
+		if (i == maxCount) break;
+	}
+}
+```
+
+There is no stop condition in `timedCounter`, so the stream outputs increasingly larger numbers forever - or until the listener cancels its subscription.
+
+- When the listener cancels, then the next time the body reaches a `yield` statement, the `yield` instead acts as a `return` statement. Any enclosing `finally` block is executed, and the function exits.
+
+## StreamController
+
+If the events comes from different parts of your program, and not just from a stream or futures that can traversed by an `async` function, then use a [StreamController](https://api.dart.dev/stable/dart-async/StreamController-class.html) to create and populate the stream.
+
+- A `StreamController` gives you a new stream and a way to add events to the stream at any point, and from anywhere.
+
+- Flawed basic example
+
+	```dart
+	// NOTE: This implementation is FLAWED!
+	// It starts before it has subscribers, and it doesn't implement pause.
+	Stream<int> timedCounter(Duration interval, [int? maxCount]) {
+	  var controller = StreamController<int>();
+	  int counter = 0;
+	  void tick(Timer timer) {
+		counter++;
+		controller.add(counter); // Ask stream to send counter values as event.
+		if (maxCount != null && counter >= maxCount) {
+		  timer.cancel();
+		  controller.close(); // Ask stream to shut down and tell listeners.
+		}
+	  }
+
+	  Timer.periodic(interval, tick); // BAD: Starts before it has subscribers.
+	  return controller.stream;
+	}
+	```
+	
+	- This implementation of `timedCounter()` has a couple of problems:
+		1. It starts producing events before it has subscribers.
+		2. It keeps producing events even if the subscriber requests a pause.
+
+- As a rule, **streams should wait for subscribers** before starting their work. An `async*` function does this automatically, but when using a `StreamController`, you are in full control.
+
+> When a stream has no subscriber, its `StreamController` buffers events, which can lead to a memory lea
+
+### Waiting for a subscription
+
+```dart
+void listenAfterDelay() async {
+	var counterStream = timedCounter(const Duration(seconds: 1), 15);
+	await Future.delayed(const Duration(seconds: 5));
+
+	// After 5 seconds, add a listener.
+	await for (int n in counterStream) {
+		print(n); // Print an integer every second, 15 times.
+	}
+}
+```
+
+When this code runs, nothing is printed for the first 5 seconds, although the stream is doing work. Then the listener is added, and the first 5 or so events are printed all at once, since they were **buffered** by the `StreamController`.
+
+- To be notified of subscriptions, specify an `onListen` argument when you create the `StreamController`.
+- The `onListen` callback is called when the stream gets its first subscriber.
+- In the preceding example, `Timer.periodic()` should move to an `onListen` handler, as shown in the next section.
+
+### Honoring the pause state
+
+An `async*` function automatically pauses at a `yield` statement while the stream subscription is paused. A `StreamController`, on the other hand, buffers events during the pause.
+
+- The following version of `timedCounter()`  implements pause by using the `onListen`, `onPause`, `onResume`, and `onCancel` callbacks on the `StreamController`.
+
+```dart
+Stream<int> timedCounter(Duration interval, [int? maxCount]) {
+	late StreamController<int> controller;
+	Timer? timer;
+	int counter = 0;
+
+	void tick(_) {
+		counter++;
+		controller.add(counter); // Ask stream to send counter values as event.
+		if (counter == maxCount) {
+			timer?.cancel();
+			controller.close(); // Ask stream to shut down and tell listeners.
+		}
+	}
+
+	void startTimer() {
+		timer = Timer.periodic(interval, tick);
+	}
+
+	void stopTimer() {
+		timer?.cancel();
+		timer = null;
+	}
+
+	controller = StreamController<int>(
+		onListen: startTimer,
+		onPause: stopTimer,
+		onResume: startTimer,
+		onCancel: stopTimer);
+
+	return controller.stream;
+}
+```
+
+# Generators
 - Generator function **lazily** produce a **sequence** of values.
 - Dart has built-in support for two kinds of generator functions:
   - *Synchronous* generator: Returns an Iterable object.
@@ -347,7 +532,7 @@
     int k = 0;
     while (k < n) yield k++;
   }
-  ``` 
+  ```
 
 - To implement an asynchronous generator: mark the function body as `async*`, and use `yield` statements
   ```dart

@@ -1,0 +1,94 @@
+{
+  "main": {
+    "id": "853de912eb0a8bdb",
+    "type": "split",
+    "children": [
+      {
+        "id": "aef1fc09b346824e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "Dart/Async.md",
+            "mode": "source"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "b9562415b2939b99",
+    "type": "split",
+    "children": [
+      {
+        "id": "249cfc7126e46b24",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0abfe87e27cbd086",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "af9c574fb6f041d5",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "b859f122ade0a9e9",
+    "type": "split",
+    "children": [
+      {
+        "id": "55a0085e9f1022a7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "787a0c3623ada868",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Dart/Async.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "aef1fc09b346824e",
+  "lastOpenFiles": [
+    "Dart/Async.md",
+    "Untitled.md"
+  ]
+}
