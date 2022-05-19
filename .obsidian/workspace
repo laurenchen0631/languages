@@ -1,10 +1,10 @@
 {
   "main": {
-    "id": "853de912eb0a8bdb",
+    "id": "0b7e9e8c531c68f2",
     "type": "split",
     "children": [
       {
-        "id": "aef1fc09b346824e",
+        "id": "2d94617731d87d93",
         "type": "leaf",
         "state": {
           "type": "markdown",
@@ -19,15 +19,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "b9562415b2939b99",
+    "id": "2b9fe34c1b22d4cd",
     "type": "split",
     "children": [
       {
-        "id": "249cfc7126e46b24",
+        "id": "15a1d5b67bc43711",
         "type": "tabs",
         "children": [
           {
-            "id": "0abfe87e27cbd086",
+            "id": "147a0df03451c731",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -35,7 +35,7 @@
             }
           },
           {
-            "id": "af9c574fb6f041d5",
+            "id": "021a810e82e5d60b",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -56,15 +56,15 @@
     "width": 300
   },
   "right": {
-    "id": "b859f122ade0a9e9",
+    "id": "75c8491dc0df460c",
     "type": "split",
     "children": [
       {
-        "id": "55a0085e9f1022a7",
+        "id": "a4907bedd7ba3aa4",
         "type": "tabs",
         "children": [
           {
-            "id": "787a0c3623ada868",
+            "id": "4cceb7637ca53d79",
             "type": "leaf",
             "state": {
               "type": "backlink",
@@ -87,14 +87,13 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "aef1fc09b346824e",
+  "active": "2d94617731d87d93",
   "lastOpenFiles": [
     "Rust/01. Basic.md",
-    "Dart/Async.md",
-    "Dart/Library.md",
-    "Dart/Effective Dart.md",
-    "Dart/Classes.md",
-    "Dart/Basic.md",
-    "Untitled.md"
+    "Rust/02. Memory.md",
+    "Rust/05. Library.md",
+    "Rust/04. Packages.md",
+    "Rust/06. Error Handling.md",
+    "Rust/03. Struct.md"
   ]
 }
