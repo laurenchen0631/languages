@@ -4,19 +4,15 @@
     "type": "split",
     "children": [
       {
-        "id": "904b060a9ab310c6",
+        "id": "fb38ae98768bf662",
         "type": "tabs",
         "children": [
           {
-            "id": "2d94617731d87d93",
+            "id": "16b742cb3243cf3d",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Rust/04. Packages.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -77,7 +73,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Rust/04. Packages.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,16 +99,25 @@
       "markdown-importer:Open format converter": false
     }
   },
-  "active": "2d94617731d87d93",
+  "active": "16b742cb3243cf3d",
   "lastOpenFiles": [
+    "Rust/08.  Pointer.md",
+    "trpl15-04.svg",
+    "trpl15-03.svg",
+    "trpl15-02.svg",
+    "Rust/09. Concurrency.md",
+    "Rust/07. Cargo.md",
+    "Rust/04. Packages.md",
+    "Rust/Untitled 1.md",
+    "Rust/06. Testing.md",
+    "Rust/01. Basic.md",
+    "Rust/Attribute.md",
     "Rust/restaurant/src/lib.rs",
     "Rust/restaurant/src",
     "Rust/restaurant/Cargo.toml",
     "Rust/restaurant",
     "Rust/03. Struct.md",
-    "Rust/04. Packages.md",
     "Rust/02. Memory.md",
-    "Rust/01. Basic.md",
     "Rust/05. Error Handling.md",
     "C++/07. Pointer.md",
     "C++/03. Abstraction.md",
